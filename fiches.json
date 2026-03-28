@@ -1,0 +1,63 @@
+{
+  "fiches": [
+    {
+      "id": "bordeaux-1",
+      "titre": "Château de Bordeaux",
+      "commune": "Bordeaux",
+      "contenu": "<h2>Château de Bordeaux</h2><p>Construit au XVe siècle, ce château est un symbole de l'architecture médiévale bordelaise. Il a servi de résidence aux duc d'Aquitaine.</p><img src='images/bordeaux-1.webp' alt='Château de Bordeaux' loading='lazy'>",
+      "image": "images/bordeaux-1.webp",
+      "debloque": false,
+      "tags": ["monument", "moyen-âge"]
+    },
+    {
+      "id": "bordeaux-2",
+      "titre": "Cathédrale Saint-André",
+      "commune": "Bordeaux",
+      "contenu": "<h2>Cathédrale Saint-André</h2><p>Classée au patrimoine mondial de l'UNESCO, cette cathédrale gothique est célèbre pour ses vitraux et sa tour Pey-Berland.</p><img src='images/bordeaux-2.webp' alt='Cathédrale Saint-André' loading='lazy'>",
+      "image": "images/bordeaux-2.webp",
+      "debloque": false,
+      "tags": ["religieux", "gothique"]
+    },
+    {
+      "id": "libourne-1",
+      "titre": "Église Saint-Pierre de Libourne",
+      "commune": "Libourne",
+      "contenu": "<h2>Église Saint-Pierre</h2><p>Cette église du XIVe siècle est un joyau de l'art gothique en Gironde. Son clocher est visible de loin.</p><img src='images/libourne-1.webp' alt='Église Saint-Pierre' loading='lazy'>",
+      "image": "images/libourne-1.webp",
+      "debloque": false,
+      "tags": ["religieux", "gothique"]
+    },
+    {
+      "id": "libourne-2",
+      "titre": "Pont de Libourne",
+      "commune": "Libourne",
+      "contenu": "<h2>Pont de Libourne</h2><p>Ce pont du XIXe siècle enjambant la Dordogne est un symbole de la ville. Il relie Libourne aux vignobles de Saint-Émilion.</p><img src='images/libourne-2.webp' alt='Pont de Libourne' loading='lazy'>",
+      "image": "images/libourne-2.webp",
+      "debloque": false,
+      "tags": ["monument", "XIXe siècle"]
+    },
+    {
+      "id": "saint-emilion-1",
+      "titre": "Clocher de Saint-Émilion",
+      "commune": "Saint-Émilion",
+      "contenu": "<h2>Clocher de Saint-Émilion</h2><p>Ce clocher monolithe du XIIe siècle est un chef-d'œuvre de l'architecture romane. Il domine les vignobles environnants.</p><img src='images/saint-emilion-1.webp' alt='Clocher de Saint-Émilion' loading='lazy'>",
+      "image": "images/saint-emilion-1.webp",
+      "debloque": false,
+      "tags": ["religieux", "roman"]
+    }
+  ],
+  "communes": [
+    {
+      "id": "bordeaux",
+      "nom": "Bordeaux"
+    },
+    {
+      "id": "libourne",
+      "nom": "Libourne"
+    },
+    {
+      "id": "saint-emilion",
+      "nom": "Saint-Émilion"
+    }
+  ]
+}
