@@ -1,216 +1,251 @@
-!DOCTYPE html
-html lang=fr
-head
-  meta charset=UTF-8
-  meta name=viewport content=width=device-width, initial-scale=1.0
-  titleGalerie de fiches historiquestitle
-  script src=httpsunpkg.com@zxinglibrary@latestscript
-  style
-     Reset et base 
-     {
-      box-sizing border-box;
-      margin 0;
-      padding 0;
-      font-family Arial, sans-serif;
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Explorateur d'Histoire Locale</title>
+  <!-- Librairie pour le scan de QR codes -->
+  <script src="https://unpkg.com/@zxing/library@latest"></script>
+  <style>
+    /* Reset et styles de base */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
     }
     body {
-      padding 15px;
-      background-color #f5f5f5;
+      padding: 15px;
+      background: #f5f5f5;
     }
     h1 {
-      text-align center;
-      margin-bottom 20px;
-      color #333;
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    #filtres {
+      margin: 15px 0;
+      text-align: center;
+    }
+    select, button {
+      padding: 8px 15px;
+      margin: 0 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      background: white;
     }
     button {
-      display block;
-      margin 10px auto;
-      padding 10px 20px;
-      background #4CAF50;
-      color white;
-      border none;
-      border-radius 5px;
-      cursor pointer;
-      font-size 16px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
     }
-    buttonhover {
-      background #45a049;
+    button:hover {
+      background: #45a049;
     }
-
-     Galerie responsive 
     #galerie {
-      display flex;
-      flex-wrap wrap;
-      gap 15px;
-      justify-content center;
-      margin-bottom 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+      margin-bottom: 20px;
     }
     .fiche {
-      flex 1 1 150px;  Taille flexible, minimum 150px 
-      max-width 200px;  Limite la taille max 
-      aspect-ratio 1;  Carré 
-      border 1px solid #ddd;
-      border-radius 8px;
-      padding 10px;
-      text-align center;
-      background white;
-      box-shadow 0 2px 5px rgba(0,0,0,0.1);
-      cursor pointer;
-      transition transform 0.2s;
+      width: 120px;
+      background: white;
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: transform 0.2s;
     }
-    .fichehover {
-      transform scale(1.03);
+    .fiche:hover {
+      transform: scale(1.03);
     }
     .fiche.verrouillee {
-      background #eee;
-      opacity 0.7;
-      cursor not-allowed;
+      opacity: 0.5;
+      background: #eee;
+      cursor: not-allowed;
     }
     .fiche img {
-      max-width 100%;
-      height auto;
-      border-radius 5px;
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 5px;
     }
-
-     Modale responsive 
+    #video {
+      width: 100%;
+      max-width: 400px;
+      display: none;
+      margin: 20px auto;
+      border-radius: 8px;
+    }
     #modal {
-      display none;
-      position fixed;
-      top 0;
-      left 0;
-      width 100%;
-      height 100%;
-      background rgba(0,0,0,0.9);
-      z-index 1000;
-      overflow-y auto;
-      padding 20px;
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
+      z-index: 1000;
+      overflow-y: auto;
+      padding: 20px;
     }
     #modal.active {
-      display block;
+      display: block;
     }
     .modal-content {
-      max-width 800px;
-      margin 0 auto;
-      background white;
-      padding 20px;
-      border-radius 10px;
-      color #333;
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      color: #333;
     }
     .modal-content img {
-      max-width 100%;
-      height auto;
-      display block;
-      margin 0 auto;
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
     }
     .fermer {
-      display block;
-      margin 20px auto 0;
-      background #f44336;
+      display: block;
+      margin: 20px auto 0;
+      background: #f44336;
     }
-    .fermerhover {
-      background #d32f2f;
-    }
+  </style>
+</head>
+<body>
+  <h1>Explorateur d'Histoire Locale</h1>
+  <div id="filtres">
+    <select id="filtre-commune">
+      <option value="">Toutes les communes</option>
+    </select>
+    <button onclick="demarrerScan()">Scanner un QR code</button>
+  </div>
+  <div id="galerie"></div>
+  <div id="modal">
+    <div class="modal-content" id="modal-content"></div>
+  </div>
+  <video id="video" autoplay playsinline></video>
 
-     Vidéo de scan 
-    #video {
-      width 100%;
-      max-width 500px;
-      display block;
-      margin 0 auto;
-      border-radius 8px;
-    }
+  <script>
+    // Données (seront chargées depuis fiches.json)
+    let fiches = [];
+    let communes = [];
 
-     Adaptations spécifiques pour mobiles 
-    @media (max-width 600px) {
-      .fiche {
-        flex 1 1 100%;  Une fiche par ligne sur petit écran 
-        max-width 100%;
+    // Charge les données depuis fiches.json
+    async function chargerDonnees() {
+      try {
+        const response = await fetch('fiches.json');
+        const data = await response.json();
+        fiches = data.fiches;
+        communes = data.communes;
+        afficherCommunes();
+        afficherGalerie();
+        chargerEtat();
+      } catch (error) {
+        console.error("Erreur de chargement :", error);
+        alert("Impossible de charger les données. Vérifie que fiches.json existe et est valide.");
       }
-      #galerie {
-        gap 10px;
-      }
-      .modal-content {
-        padding 10px;
-      }
-    }
-  style
-head
-body
-  h1Galerie des Personnages Historiquesh1
-  button onclick=demarrerScan()Scanner un QR codebutton
-  div id=galeriediv
-  div id=modal class=modal
-    div class=modal-content
-      !-- Contenu dynamique --
-    div
-  div
-  video id=video style=display none;video
-
-  script
-     Données des fiches (exemple)
-    let fiches = [
-      { id qr1, titre Napoléon, contenu h2Napoléon Bonaparteh2pEmpereur des Français, connu pour ses campagnes militaires et son influence sur l'Europe au début du XIXe siècle.pimg src='httpsvia.placeholder.com300x200text=Napoléon' alt='Napoléon', debloque false },
-      { id qr2, titre Jeanne d'Arc, contenu h2Jeanne d'Arch2pHéroïne française, symbole de la résistance pendant la guerre de Cent Ans. Elle a mené les troupes françaises à plusieurs victoires.pimg src='httpsvia.placeholder.com300x200text=Jeanne+d%27Arc' alt='Jeanne d'Arc', debloque false },
-      { id qr3, titre Léonard de Vinci, contenu h2Léonard de Vincih2pGénie italien de la Renaissance, à la fois peintre, inventeur, scientifique et bien plus. Auteur de la Joconde et de nombreuses inventions visionnaires.pimg src='httpsvia.placeholder.com300x200text=Léonard+de+Vinci' alt='Léonard de Vinci', debloque false },
-    ];
-
-     Charger l'état depuis localStorage
-    const saved = localStorage.getItem('fichesDebloquees');
-    if (saved) {
-      const debloquees = JSON.parse(saved);
-      fiches.forEach(f = { f.debloque = debloquees.includes(f.id); });
     }
 
-     Afficher la galerie
-    function afficherGalerie() {
+    // Charge l'état depuis localStorage
+    function chargerEtat() {
+      const saved = localStorage.getItem('fichesDebloquees');
+      if (saved) {
+        const debloquees = JSON.parse(saved);
+        fiches.forEach(f => {
+          f.debloque = debloquees.includes(f.id);
+        });
+      }
+      afficherGalerie(); // Rafraîchit l'affichage après chargement
+    }
+
+    // Sauvegarde l'état
+    function sauvegarderEtat() {
+      const debloquees = fiches.filter(f => f.debloque).map(f => f.id);
+      localStorage.setItem('fichesDebloquees', JSON.stringify(debloquees));
+    }
+
+    // Affiche les communes dans le filtre
+    function afficherCommunes() {
+      const select = document.getElementById('filtre-commune');
+      select.innerHTML = `
+        <option value="">Toutes les communes</option>
+        ${communes.map(c => `<option value="${c.id}">${c.nom}</option>`).join('')}
+      `;
+      select.addEventListener('change', (e) => afficherGalerie(e.target.value));
+    }
+
+    // Affiche la galerie (filtrée si besoin)
+    function afficherGalerie(communeId = null) {
       const galerie = document.getElementById('galerie');
-      galerie.innerHTML = fiches.map(fiche =
-        `div class=fiche ${fiche.debloque  ''  'verrouillee'}
-             onclick=${fiche.debloque  `afficherFiche('${fiche.id}')`  ''}
-          ${fiche.debloque  `img src=httpsvia.placeholder.com150text=${encodeURIComponent(fiche.titre)} alt=${fiche.titre}`  ''}
-          p${fiche.titre}p
-        div`
-      ).join('');
+      const fichesAFiltrer = communeId
+        ? fiches.filter(f => f.commune.toLowerCase() === communeId.toLowerCase())
+        : fiches;
+      galerie.innerHTML = fichesAFiltrer.map(fiche => `
+        <div class="fiche ${fiche.debloque ? '' : 'verrouillee'}"
+             onclick="${fiche.debloque ? `afficherFiche('${fiche.id}')` : ''}">
+          ${fiche.debloque ?
+            `<img src="${fiche.image}" alt="${fiche.titre}" loading="lazy">` :
+            '<div style="width:100px;height:100px;background:#ddd;border-radius:5px;display:flex;align-items:center;justify-content:center;">???</div>'}
+          <p>${fiche.titre}</p>
+        </div>
+      `).join('');
     }
 
-     Afficher une fiche dans la modale
+    // Affiche une fiche dans la modale
     function afficherFiche(id) {
-      const fiche = fiches.find(f = f.id === id);
-      document.querySelector('#modal .modal-content').innerHTML = `
+      const fiche = fiches.find(f => f.id === id);
+      document.getElementById('modal-content').innerHTML = `
+        <h2>${fiche.titre}</h2>
         ${fiche.contenu}
-        button class=fermer onclick=document.getElementById('modal').classList.remove('active')Fermerbutton
+        <button class="fermer" onclick="document.getElementById('modal').classList.remove('active')">Fermer</button>
       `;
       document.getElementById('modal').classList.add('active');
     }
 
-     Démarrer le scan
+    // Démarre le scan de QR code
     function demarrerScan() {
-      document.getElementById('video').style.display = 'block';
+      const video = document.getElementById('video');
+      video.style.display = 'block';
       const codeReader = new ZXing.BrowserQRCodeReader();
-      codeReader.decodeFromVideoDevice(null, 'video', (result, err) = {
+      codeReader.decodeFromVideoDevice(null, 'video', (result, err) => {
         if (result) {
+          video.style.display = 'none';
           const id = result.text;
-          const fiche = fiches.find(f = f.id === id);
+          const fiche = fiches.find(f => f.id === id);
           if (fiche && !fiche.debloque) {
             fiche.debloque = true;
-            localStorage.setItem('fichesDebloquees', JSON.stringify(fiches.filter(f = f.debloque).map(f = f.id)));
+            sauvegarderEtat();
             afficherGalerie();
-            alert(`Fiche ${fiche.titre} débloquée !`);
-            document.getElementById('video').style.display = 'none';
+            afficherFiche(id);
+          } else if (fiche) {
+            alert(`La fiche "${fiche.titre}" est déjà débloquée !`);
+          } else {
+            alert(`Aucune fiche trouvée pour l'ID : ${id}`);
           }
+        }
+        if (err && !(err instanceof ZXing.NotFoundException)) {
+          console.error(err);
+          video.style.display = 'none';
+          alert("Erreur de scan : " + err.message);
         }
       });
     }
 
-     Fermer la modale en cliquant hors du contenu
+    // Ferme la modale en cliquant hors du contenu
     document.getElementById('modal').addEventListener('click', function(e) {
       if (e.target === this) {
         this.classList.remove('active');
       }
     });
 
-     Initialisation
-    afficherGalerie();
-  script
-body
-html
+    // Initialisation
+    chargerDonnees();
+  </script>
+</body>
+</html>
