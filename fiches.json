@@ -1,7 +1,7 @@
 {
   "fiches": [
     {
-      "id": "bordeaux-1",
+      "id": "bordeaux",
       "titre": "Château de Bordeaux",
       "commune": "Bordeaux",
       "contenu": "<h2>Château de Bordeaux</h2><p>Construit au XVe siècle, ce château est un symbole de l'architecture médiévale bordelaise. Il a servi de résidence aux duc d'Aquitaine.</p><img src='images/bordeaux-1.webp' alt='Château de Bordeaux' loading='lazy'>",
