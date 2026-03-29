@@ -1,9 +1,8 @@
-// Données globales
 let fiches = [];
 let communes = [];
-let scanner = null; // Variable globale pour le scanner Instascan
+let scanner = null;
 
-// Charge les données depuis fiches.json
+// Charge les données
 async function chargerDonnees() {
   try {
     const response = await fetch('fiches.json');
@@ -23,31 +22,32 @@ async function chargerDonnees() {
 function chargerEtat() {
   const saved = localStorage.getItem('fichesDebloquees');
   if (saved) {
-    const debloquees = JSON.parse(saved);
-    fiches.forEach(f => {
-      f.debloque = debloquees.includes(f.id);
+    JSON.parse(saved).forEach(id => {
+      const fiche = fiches.find(f => f.id === id);
+      if (fiche) fiche.debloque = true;
     });
   }
 }
 
-// Sauvegarde l'état dans localStorage
+// Sauvegarde l'état
 function sauvegarderEtat() {
   const debloquees = fiches.filter(f => f.debloque).map(f => f.id);
   localStorage.setItem('fichesDebloquees', JSON.stringify(debloquees));
 }
 
-// Affiche les communes dans le filtre
+// Affiche les communes
 function afficherCommunes() {
   const select = document.getElementById('filtre-commune');
-  if (!select) return;
-  select.innerHTML = `
-    <option value="">Toutes les communes</option>
-    ${communes.map(commune => `<option value="${commune.id}">${commune.nom}</option>`).join('')}
-  `;
-  select.addEventListener('change', (e) => afficherGalerie(e.target.value));
+  if (select) {
+    select.innerHTML = `
+      <option value="">Toutes les communes</option>
+      ${communes.map(c => `<option value="${c.id}">${c.nom}</option>`).join('')}
+    `;
+    select.addEventListener('change', (e) => afficherGalerie(e.target.value));
+  }
 }
 
-// Affiche les fiches (filtrées si besoin)
+// Affiche les fiches
 function afficherGalerie(communeId = null) {
   const galerie = document.getElementById('galerie');
   if (!galerie) return;
@@ -63,22 +63,18 @@ function afficherGalerie(communeId = null) {
         `<img src="${fiche.image}" alt="${fiche.titre}" loading="lazy">` :
         '<div style="width:100px;height:100px;background:#ddd;border-radius:5px;display:flex;align-items:center;justify-content:center;">???</div>'}
       <p>${fiche.titre}</p>
-      <small>${fiche.commune}</small>
     </div>
   `).join('');
 }
 
-// Affiche une fiche dans la modale
+// Affiche une fiche
 function afficherFiche(id) {
   const fiche = fiches.find(f => f.id === id);
-  if (!fiche) {
-    alert(`Fiche non trouvée : ${id}`);
-    return;
-  }
+  if (!fiche) return;
   document.getElementById('modal-content').innerHTML = `
     <h2>${fiche.titre}</h2>
     ${fiche.contenu}
-    <button class="fermer" onclick="document.getElementById('modal').classList.remove('active')">Fermer</button>
+    <button onclick="document.getElementById('modal').classList.remove('active')">Fermer</button>
   `;
   document.getElementById('modal').classList.add('active');
 }
@@ -86,78 +82,56 @@ function afficherFiche(id) {
 // Démarre le scan avec Instascan
 function demarrerScan() {
   const video = document.getElementById('video');
+  if (!video) return;
   video.style.display = 'block';
 
   // Arrête le scanner précédent s'il existe
-  if (scanner) {
-    scanner.stop();
+  if (scanner) scanner.stop();
+
+  // Vérifie que Instascan est chargé
+  if (typeof Instascan === 'undefined') {
+    alert("Instascan n'est pas chargé. Vérifie la connexion Internet ou recharge la page.");
+    video.style.display = 'none';
+    return;
   }
 
-  // Initialise Instascan
-  scanner = new Instascan.Scanner({
-    video: video,
-    mirror: false, // Désactive le miroir pour les caméras frontales
-    backgroundScan: false, // Désactive le scan en arrière-plan
-    refractoryPeriod: 5000, // Délai entre deux scans (ms)
-    continuous: true // Scan continu
-  });
-
-  // Écoute les QR codes scannés
+  scanner = new Instascan.Scanner({ video: video });
   scanner.addListener('scan', function(content) {
-    console.log("QR code scanné :", content);
-    scanner.stop(); // Arrête le scanner après un scan réussi
-
     const id = content.trim();
     const fiche = fiches.find(f => f.id === id);
-
-    if (!fiche) {
-      alert(`Aucune fiche trouvée pour l'ID : ${id}`);
-      video.style.display = 'none';
-      return;
-    }
-
-    if (fiche.debloque) {
-      alert(`La fiche "${fiche.titre}" est déjà débloquée !`);
-    } else {
+    if (fiche && !fiche.debloque) {
       fiche.debloque = true;
       sauvegarderEtat();
       afficherGalerie();
       afficherFiche(id);
     }
-
+    scanner.stop();
     video.style.display = 'none';
   });
 
-  // Démarre le scanner
   Instascan.Camera.getCameras()
     .then(cameras => {
       if (cameras.length > 0) {
-        // Utilise la caméra arrière par défaut (index 1 si disponible)
-        const camera = cameras.length > 1 ? cameras[1] : cameras[0];
-        scanner.start(camera);
-        console.log("Scanner démarré avec la caméra :", camera.name);
+        scanner.start(cameras[cameras.length - 1]); // Utilise la dernière caméra (souvent la caméra arrière)
       } else {
-        console.error("Aucune caméra trouvée.");
-        alert("Aucune caméra détectée. Vérifie tes périphériques.");
+        alert("Aucune caméra détectée.");
         video.style.display = 'none';
       }
     })
     .catch(err => {
       console.error("Erreur Instascan :", err);
-      alert("Erreur lors de l'initialisation du scanner. Voir la console.");
+      alert("Erreur lors de l'initialisation du scanner.");
       video.style.display = 'none';
     });
 }
 
-// Ferme la modale en cliquant hors du contenu
+// Ferme la modale
 document.addEventListener('DOMContentLoaded', () => {
   const modal = document.getElementById('modal');
   if (modal) {
     modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        modal.classList.remove('active');
-      }
+      if (e.target === modal) modal.classList.remove('active');
     });
   }
-  chargerDonnees(); // Charge les données au démarrage
+  chargerDonnees();
 });
