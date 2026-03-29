@@ -1,28 +1,158 @@
-// Déclaration UNIQUE de la variable fiches
+// Données globales
 let fiches = [];
+let communes = [];
 
-// Charge les données
+// Charge les données depuis fiches.json
 async function chargerDonnees() {
   try {
     const response = await fetch('fiches.json');
     const data = await response.json();
     fiches = data.fiches;
-    afficherGalerie();
-    chargerEtat();
+    communes = data.communes;
+    afficherCommunes(); // Affiche le filtre des communes
+    afficherGalerie();  // Affiche toutes les fiches
+    chargerEtat();      // Charge l'état des fiches débloquées
   } catch (error) {
-    console.error("Erreur de chargement :", error);
+    console.error("Erreur de chargement des données :", error);
+    alert("Impossible de charger les données. Vérifie que fiches.json est accessible.");
   }
 }
 
-// Affiche les fiches
-function afficherGalerie() {
+// Charge l'état des fiches débloquées depuis localStorage
+function chargerEtat() {
+  const saved = localStorage.getItem('fichesDebloquees');
+  if (saved) {
+    const debloquees = JSON.parse(saved);
+    fiches.forEach(f => {
+      f.debloque = debloquees.includes(f.id);
+    });
+  }
+}
+
+// Sauvegarde l'état des fiches débloquées dans localStorage
+function sauvegarderEtat() {
+  const debloquees = fiches.filter(f => f.debloque).map(f => f.id);
+  localStorage.setItem('fichesDebloquees', JSON.stringify(debloquees));
+  console.log("État sauvegardé :", debloquees);
+}
+
+// Affiche le filtre des communes
+function afficherCommunes() {
+  const select = document.getElementById('filtre-commune');
+  if (!select) {
+    console.error("Élément filtre-commune non trouvé dans le HTML.");
+    return;
+  }
+  select.innerHTML = `
+    <option value="">Toutes les communes</option>
+    ${communes.map(commune => `
+      <option value="${commune.id}">${commune.nom}</option>
+    `).join('')}
+  `;
+  select.addEventListener('change', (e) => {
+    afficherGalerie(e.target.value); // Filtre les fiches par commune
+  });
+}
+
+// Affiche les fiches (filtrées par commune si nécessaire)
+function afficherGalerie(communeId = null) {
   const galerie = document.getElementById('galerie');
-  galerie.innerHTML = fiches.map(fiche => `
-    <div class="fiche" onclick="afficherFiche('${fiche.id}')">
-      <img src="${fiche.image}" alt="${fiche.titre}">
+  if (!galerie) {
+    console.error("Élément galerie non trouvé dans le HTML.");
+    return;
+  }
+
+  const fichesAFiltrer = communeId
+    ? fiches.filter(fiche => fiche.commune.toLowerCase() === communeId.toLowerCase())
+    : fiches;
+
+  galerie.innerHTML = fichesAFiltrer.map(fiche => `
+    <div class="fiche ${fiche.debloque ? '' : 'verrouillee'}"
+         onclick="${fiche.debloque ? `afficherFiche('${fiche.id}')` : ''}">
+      ${fiche.debloque ?
+        `<img src="${fiche.image}" alt="${fiche.titre}" loading="lazy">` :
+        '<div style="width:100px;height:100px;background:#ddd;border-radius:5px;display:flex;align-items:center;justify-content:center;">???</div>'}
       <p>${fiche.titre}</p>
+      <small>${fiche.commune}</small>
     </div>
   `).join('');
 }
 
-// Autres fonctions (demarrerScan, afficherFiche, etc.)...
+// Affiche une fiche dans une modale
+function afficherFiche(id) {
+  const fiche = fiches.find(f => f.id === id);
+  if (!fiche) {
+    console.error(`Fiche non trouvée pour l'ID : ${id}`);
+    alert(`Aucune fiche trouvée pour l'ID : ${id}`);
+    return;
+  }
+
+  const modal = document.getElementById('modal');
+  const modalContent = document.getElementById('modal-content');
+  if (!modal || !modalContent) {
+    console.error("Élément modal ou modal-content non trouvé dans le HTML.");
+    return;
+  }
+
+  modalContent.innerHTML = `
+    <h2>${fiche.titre}</h2>
+    ${fiche.contenu}
+    <button class="fermer" onclick="document.getElementById('modal').classList.remove('active')">Fermer</button>
+  `;
+  modal.classList.add('active');
+}
+
+// Démarre le scan de QR code
+function demarrerScan() {
+  const video = document.getElementById('video');
+  if (!video) {
+    console.error("Élément video non trouvé dans le HTML.");
+    return;
+  }
+
+  video.style.display = 'block';
+  const codeReader = new ZXing.BrowserQRCodeReader();
+
+  codeReader.decodeFromVideoDevice(null, 'video', (result, err) => {
+    if (result) {
+      video.style.display = 'none';
+      const id = result.text.trim();
+      console.log("QR code scanné :", id);
+
+      const fiche = fiches.find(f => f.id === id);
+      if (!fiche) {
+        console.error(`Aucune fiche trouvée pour l'ID : ${id}`);
+        alert(`Aucune fiche ne correspond à l'ID "${id}". Vérifie le QR code.`);
+        return;
+      }
+
+      if (fiche.debloque) {
+        alert(`La fiche "${fiche.titre}" est déjà débloquée !`);
+      } else {
+        fiche.debloque = true;
+        sauvegarderEtat();
+        afficherGalerie();
+        afficherFiche(id);
+      }
+    }
+
+    if (err && !(err instanceof ZXing.NotFoundException)) {
+      console.error("Erreur de scan :", err);
+      video.style.display = 'none';
+      alert("Erreur lors du scan. Vérifie les permissions de la caméra ou réessaye.");
+    }
+  });
+}
+
+// Ferme la modale en cliquant hors du contenu
+document.addEventListener('DOMContentLoaded', () => {
+  const modal = document.getElementById('modal');
+  if (modal) {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.classList.remove('active');
+      }
+    });
+  }
+  chargerDonnees(); // Charge les données au démarrage
+});
