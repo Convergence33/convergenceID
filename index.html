@@ -3,122 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Histo(u)quête</title>
-  <!-- Librairie pour le scan de QR codes -->
-  <script src="https://unpkg.com/@zxing/library@latest"></script>
+  <title>Explorateur d'Histoire Locale</title>
+  <script src="https://unpkg.com/@zxing/library@latest"></script> <!-- Pour le scan de QR codes -->
   <style>
-    /* Reset et styles de base */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
-    body {
-      padding: 15px;
-      background: #f5f5f5;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #333;
-    }
-    #filtres {
-      margin: 15px 0;
-      text-align: center;
-    }
-    select, button {
-      padding: 8px 15px;
-      margin: 0 5px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      background: white;
-    }
-    button {
-      background: #4CAF50;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #45a049;
-    }
-    #galerie {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
-    .fiche {
-      width: 120px;
-      background: white;
-      border-radius: 8px;
-      padding: 10px;
-      text-align: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-    .fiche:hover {
-      transform: scale(1.03);
-    }
-    .fiche.verrouillee {
-      opacity: 0.5;
-      background: #eee;
-      cursor: not-allowed;
-    }
-    .fiche img {
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-      border-radius: 5px;
-    }
-    #video {
-      width: 100%;
-      max-width: 400px;
-      display: none;
-      margin: 20px auto;
-      border-radius: 8px;
-    }
-    #modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.9);
-      z-index: 1000;
-      overflow-y: auto;
-      padding: 20px;
-    }
-    #modal.active {
-      display: block;
-    }
-    .modal-content {
-      max-width: 800px;
-      margin: 0 auto;
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      color: #333;
-    }
-    .modal-content img {
-      max-width: 100%;
-      height: auto;
-      display: block;
-      margin: 0 auto;
-    }
-    .fermer {
-      display: block;
-      margin: 20px auto 0;
-      background: #f44336;
-    }
+    /* Tes styles CSS ici */
+    #galerie { display: flex; flex-wrap: wrap; gap: 15px; }
+    .fiche { width: 120px; border: 1px solid #ccc; padding: 10px; text-align: center; }
+    #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); }
   </style>
 </head>
 <body>
-  <h1>Hist(o)uquête</h1>
+  <h1>Explorateur d'Histoire Locale</h1>
   <div id="filtres">
     <select id="filtre-commune">
       <option value="">Toutes les communes</option>
@@ -127,126 +22,10 @@
   </div>
   <div id="galerie"></div>
   <div id="modal">
-    <div class="modal-content" id="modal-content"></div>
+    <div id="modal-content"></div>
   </div>
-  <video id="video" autoplay playsinline></video>
+  <video id="video" autoplay playsinline style="display: none;"></video>
 
-  <script>
-    // Données (seront chargées depuis fiches.json)
-    let fiches = [];
-    let communes = [];
-
-    // Charge les données depuis fiches.json
-    async function chargerDonnees() {
-      try {
-        const response = await fetch('fiches.json');
-        const data = await response.json();
-        fiches = data.fiches;
-        communes = data.communes;
-        afficherCommunes();
-        afficherGalerie();
-        chargerEtat();
-      } catch (error) {
-        console.error("Erreur de chargement :", error);
-        alert("Impossible de charger les données. Vérifie que fiches.json existe et est valide.");
-      }
-    }
-
-    // Charge l'état depuis localStorage
-    function chargerEtat() {
-      const saved = localStorage.getItem('fichesDebloquees');
-      if (saved) {
-        const debloquees = JSON.parse(saved);
-        fiches.forEach(f => {
-          f.debloque = debloquees.includes(f.id);
-        });
-      }
-      afficherGalerie(); // Rafraîchit l'affichage après chargement
-    }
-
-    // Sauvegarde l'état
-    function sauvegarderEtat() {
-      const debloquees = fiches.filter(f => f.debloque).map(f => f.id);
-      localStorage.setItem('fichesDebloquees', JSON.stringify(debloquees));
-    }
-
-    // Affiche les communes dans le filtre
-    function afficherCommunes() {
-      const select = document.getElementById('filtre-commune');
-      select.innerHTML = `
-        <option value="">Toutes les communes</option>
-        ${communes.map(c => `<option value="${c.id}">${c.nom}</option>`).join('')}
-      `;
-      select.addEventListener('change', (e) => afficherGalerie(e.target.value));
-    }
-
-    // Affiche la galerie (filtrée si besoin)
-    function afficherGalerie(communeId = null) {
-      const galerie = document.getElementById('galerie');
-      const fichesAFiltrer = communeId
-        ? fiches.filter(f => f.commune.toLowerCase() === communeId.toLowerCase())
-        : fiches;
-      galerie.innerHTML = fichesAFiltrer.map(fiche => `
-        <div class="fiche ${fiche.debloque ? '' : 'verrouillee'}"
-             onclick="${fiche.debloque ? `afficherFiche('${fiche.id}')` : ''}">
-          ${fiche.debloque ?
-            `<img src="${fiche.image}" alt="${fiche.titre}" loading="lazy">` :
-            '<div style="width:100px;height:100px;background:#ddd;border-radius:5px;display:flex;align-items:center;justify-content:center;">???</div>'}
-          <p>${fiche.titre}</p>
-        </div>
-      `).join('');
-    }
-
-    // Affiche une fiche dans la modale
-    function afficherFiche(id) {
-      const fiche = fiches.find(f => f.id === id);
-      document.getElementById('modal-content').innerHTML = `
-        <h2>${fiche.titre}</h2>
-        ${fiche.contenu}
-        <button class="fermer" onclick="document.getElementById('modal').classList.remove('active')">Fermer</button>
-      `;
-      document.getElementById('modal').classList.add('active');
-    }
-
-    // Démarre le scan de QR code
-    function demarrerScan() {
-      const video = document.getElementById('video');
-      video.style.display = 'block';
-      const codeReader = new ZXing.BrowserQRCodeReader();
-      codeReader.decodeFromVideoDevice(null, 'video', (result, err) => {
-        if (result) {
-          video.style.display = 'none';
-          const id = result.text;
-          const fiche = fiches.find(f => f.id === id);
-          if (fiche && !fiche.debloque) {
-            fiche.debloque = true;
-            sauvegarderEtat();
-            afficherGalerie();
-            afficherFiche(id);
-          } else if (fiche) {
-            alert(`La fiche "${fiche.titre}" est déjà débloquée !`);
-          } else {
-            alert(`Aucune fiche trouvée pour l'ID : ${id}`);
-          }
-        }
-        if (err && !(err instanceof ZXing.NotFoundException)) {
-          console.error(err);
-          video.style.display = 'none';
-          alert("Erreur de scan : " + err.message);
-        }
-      });
-    }
-
-    // Ferme la modale en cliquant hors du contenu
-    document.getElementById('modal').addEventListener('click', function(e) {
-      if (e.target === this) {
-        this.classList.remove('active');
-      }
-    });
-
-    // Initialisation
-    chargerDonnees();
-  </script>
-<script src="script.js"></script>
+  <script src="script.js"></script> <!-- Chargement du script -->
 </body>
 </html>
