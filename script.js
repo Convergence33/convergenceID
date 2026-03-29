@@ -105,41 +105,19 @@ function afficherFiche(id) {
 // Démarre le scan de QR code
 function demarrerScan() {
   const video = document.getElementById('video');
-  if (!video) {
-    console.error("Élément video non trouvé dans le HTML.");
-    return;
-  }
-
   video.style.display = 'block';
-  const codeReader = new ZXing.BrowserQRCodeReader();
-
-  codeReader.decodeFromVideoDevice(null, 'video', (result, err) => {
-    if (result) {
-      video.style.display = 'none';
-      const id = result.text.trim();
-      console.log("QR code scanné :", id);
-
-      const fiche = fiches.find(f => f.id === id);
-      if (!fiche) {
-        console.error(`Aucune fiche trouvée pour l'ID : ${id}`);
-        alert(`Aucune fiche ne correspond à l'ID "${id}". Vérifie le QR code.`);
-        return;
-      }
-
-      if (fiche.debloque) {
-        alert(`La fiche "${fiche.titre}" est déjà débloquée !`);
-      } else {
-        fiche.debloque = true;
-        sauvegarderEtat();
-        afficherGalerie();
-        afficherFiche(id);
-      }
-    }
-
-    if (err && !(err instanceof ZXing.NotFoundException)) {
-      console.error("Erreur de scan :", err);
-      video.style.display = 'none';
-      alert("Erreur lors du scan. Vérifie les permissions de la caméra ou réessaye.");
+  const scanner = new Instascan.Scanner({ video: video });
+  scanner.addListener('scan', function(content) {
+    console.log("QR code scanné :", content);
+    // Traite le contenu du QR code ici
+    scanner.stop();
+    video.style.display = 'none';
+  });
+  Instascan.Camera.getCameras().then(function(cameras) {
+    if (cameras.length > 0) {
+      scanner.start(cameras[0]);
+    } else {
+      alert("Aucune caméra trouvée.");
     }
   });
 }
