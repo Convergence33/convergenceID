@@ -3,26 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Explorateur d'Histoire Locale</title>
-  <script src="https://unpkg.com/@zxing/library@latest"></script>
-  <style>
-    /* Tes styles CSS ici */
-  </style>
+  <title>QR Fiches</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/html5-qrcode" defer></script>
+  <script src="app.js" defer></script>
 </head>
 <body>
-  <h1>Explorateur d'Histoire Locale</h1>
-  <div id="filtres">
-    <select id="filtre-commune">
-      <option value="">Toutes les communes</option>
-    </select>
-    <button id="scan-button">Scanner un QR code</button>
-  </div>
-  <div id="galerie"></div>
-  <div id="modal">
-    <div class="modal-content" id="modal-content"></div>
-  </div>
-  <video id="video" autoplay playsinline style="display: none;"></video>
 
-  <script src="script.js"></script>
+  <h1>📱 Ma Collection</h1>
+
+  <div id="reader"></div>
+
+  <div id="fiches"></div>
+
 </body>
 </html>
