@@ -1,7 +1,7 @@
 const fiches = [
-  { id: "fiche1", titre: "L'ortie ", image: "images/carte1.webp", texte: "Description de la carte 1", unlocked: false },
-  { id: "fiche2", titre: "Carte 2", image: "images/carte2.webp", texte: "Description de la carte 2", unlocked: false },
-  { id: "fiche3", titre: "Carte 3", image: "images/carte3.webp", texte: "Description de la carte 3", unlocked: false }
+  { id: "fiche1", titre: "Carte 1", image: "images/carte1.webp", unlocked: false },
+  { id: "fiche2", titre: "Carte 2", image: "images/carte2.webp", unlocked: false },
+  { id: "fiche3", titre: "Carte 3", image: "images/carte3.webp", unlocked: false }
 ];
 
 function sauvegarder() {
@@ -36,8 +36,15 @@ function afficherFiches() {
         <img src="${fiche.image}">
       `;
 
+      // 👉 téléchargement direct
       div.onclick = () => {
-        window.location.href = `fiche.html?id=${fiche.id}`;
+        const url = `fiches/${fiche.id}.pdf`;
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${fiche.id}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
       };
     }
 
