@@ -60,27 +60,48 @@ function debloquerFiche(id) {
   }
 }
 
-// scanner (au clic)
+// scanner
 let scannerStarted = false;
+let qr = null;
 
 function initScanner() {
-  document.getElementById("scan-btn").addEventListener("click", () => {
+  const btn = document.getElementById("scan-btn");
+  const reader = document.getElementById("reader");
 
-    if (scannerStarted) return;
+  btn.addEventListener("click", () => {
 
-    document.getElementById("reader").style.display = "block";
+    if (!scannerStarted) {
+      // OUVRIR
+      reader.style.display = "block";
+      setTimeout(() => reader.classList.add("show"), 10);
 
-    const qr = new Html5Qrcode("reader");
+      qr = new Html5Qrcode("reader");
 
-    qr.start(
-      { facingMode: "environment" },
-      { fps: 10, qrbox: 250 },
-      (decodedText) => {
-        debloquerFiche(decodedText);
-      }
-    );
+      qr.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 250 },
+        (decodedText) => {
+          debloquerFiche(decodedText);
+        }
+      );
 
-    scannerStarted = true;
+      btn.innerText = "❌ Masquer la caméra";
+      scannerStarted = true;
+
+    } else {
+      // FERMER
+      qr.stop().then(() => {
+        reader.classList.remove("show");
+
+        setTimeout(() => {
+          reader.style.display = "none";
+        }, 300);
+
+        btn.innerText = "📷 Scanner une fiche";
+        scannerStarted = false;
+      });
+    }
+
   });
 }
 
