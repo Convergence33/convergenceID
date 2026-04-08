@@ -9,17 +9,31 @@ h1, h2 {
   text-align: center;
 }
 
+/* bouton scanner */
+#scan-btn {
+  display: block;
+  margin: 20px auto;
+  padding: 15px;
+  font-size: 18px;
+  border-radius: 10px;
+  background: black;
+  color: white;
+}
+
+/* scanner */
 #reader {
   margin: 20px auto;
   max-width: 300px;
 }
 
+/* grille */
 #fiches {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 15px;
 }
 
+/* cartes */
 .fiche {
   background: white;
   border-radius: 12px;
@@ -27,6 +41,11 @@ h1, h2 {
   text-align: center;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.fiche:active {
+  transform: scale(0.95);
 }
 
 .fiche img {
@@ -34,6 +53,14 @@ h1, h2 {
   border-radius: 10px;
 }
 
+/* verrou */
+.locked {
+  background: #ccc;
+  color: #666;
+  cursor: default;
+}
+
+/* page détail */
 .detail-img {
   width: 100%;
   max-height: 40vh;
@@ -46,12 +73,6 @@ h1, h2 {
   height: 50vh;
   margin-top: 15px;
   border: none;
-}
-
-.locked {
-  background: #ccc;
-  color: #666;
-  cursor: default;
 }
 
 button {

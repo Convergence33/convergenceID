@@ -4,10 +4,12 @@ const fiches = [
   { id: "fiche3", titre: "Carte 3", image: "images/carte3.webp", unlocked: false }
 ];
 
+// sauvegarde
 function sauvegarder() {
   localStorage.setItem("fiches", JSON.stringify(fiches));
 }
 
+// chargement
 function charger() {
   const data = localStorage.getItem("fiches");
   if (data) {
@@ -19,6 +21,7 @@ function charger() {
   }
 }
 
+// affichage
 function afficherFiches() {
   const container = document.getElementById("fiches");
   container.innerHTML = "";
@@ -45,6 +48,7 @@ function afficherFiches() {
   });
 }
 
+// déblocage
 function debloquerFiche(id) {
   const fiche = fiches.find(f => f.id === id);
 
@@ -56,20 +60,33 @@ function debloquerFiche(id) {
   }
 }
 
-function startScanner() {
-  const qr = new Html5Qrcode("reader");
+// scanner (au clic)
+let scannerStarted = false;
 
-  qr.start(
-    { facingMode: "environment" },
-    { fps: 10, qrbox: 250 },
-    (decodedText) => {
-      debloquerFiche(decodedText);
-    }
-  );
+function initScanner() {
+  document.getElementById("scan-btn").addEventListener("click", () => {
+
+    if (scannerStarted) return;
+
+    document.getElementById("reader").style.display = "block";
+
+    const qr = new Html5Qrcode("reader");
+
+    qr.start(
+      { facingMode: "environment" },
+      { fps: 10, qrbox: 250 },
+      (decodedText) => {
+        debloquerFiche(decodedText);
+      }
+    );
+
+    scannerStarted = true;
+  });
 }
 
+// init
 window.onload = () => {
   charger();
   afficherFiches();
-  startScanner();
+  initScanner();
 };
