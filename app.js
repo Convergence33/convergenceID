@@ -36,15 +36,9 @@ function afficherFiches() {
         <img src="${fiche.image}">
       `;
 
-      // 👉 téléchargement direct
+      // 👉 navigation vers page fiche
       div.onclick = () => {
-        const url = `fiches/${fiche.id}.pdf`;
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `${fiche.id}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        window.location.href = `fiche.html?id=${fiche.id}`;
       };
     }
 
