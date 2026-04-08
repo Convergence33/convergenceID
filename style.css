@@ -5,7 +5,7 @@ body {
   background: #f5f5f5;
 }
 
-h1 {
+h1, h2 {
   text-align: center;
 }
 
@@ -26,6 +26,7 @@ h1 {
   padding: 10px;
   text-align: center;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  cursor: pointer;
 }
 
 .fiche img {
@@ -33,7 +34,24 @@ h1 {
   border-radius: 10px;
 }
 
+.detail-img {
+  width: 100%;
+  max-height: 50vh;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
 .locked {
   background: #ccc;
   color: #666;
+  cursor: default;
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: black;
+  color: white;
 }
