@@ -110,4 +110,14 @@ window.onload = () => {
   charger();
   afficherFiches();
   initScanner();
+document.getElementById("reset-btn").addEventListener("click", () => {
+
+  const confirmReset = confirm("Réinitialiser toutes les fiches ?");
+  
+  if (confirmReset) {
+    localStorage.clear(); // ou localStorage.removeItem("fiches")
+    location.reload();
+  }
+
+});
 };
