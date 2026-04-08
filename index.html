@@ -10,7 +10,7 @@
 </head>
 <body>
 
-  <h1>📱 Ce que j'ai vu !</h1>
+  <h1>📱 Ma Collection</h1>
 
   <div id="reader"></div>
 
@@ -21,7 +21,7 @@
 
 
 <!-- =========================
-fiche.html
+fiche.html (optionnelle si tu veux garder le détail)
 ========================= -->
 <!DOCTYPE html>
 <html lang="fr">
@@ -37,29 +37,6 @@ fiche.html
 
   <div id="fiche-detail"></div>
 
-  <script>
-    const fiches = [
-      { id: "fiche1", titre: "L'ortie", image: "images/carte1.webp", texte: "Description de la carte 1" },
-      { id: "fiche2", titre: "Carte 2", image: "images/carte2.webp", texte: "Description de la carte 2" },
-      { id: "fiche3", titre: "Carte 3", image: "images/carte3.webp", texte: "Description de la carte 3" }
-    ];
-
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get("id");
-
-    const fiche = fiches.find(f => f.id === id);
-
-    if (fiche) {
-      document.getElementById("fiche-detail").innerHTML = `
-        <h2>${fiche.titre}</h2>
-        <img src="${fiche.image}" class="detail-img">
-        <p>${fiche.texte}</p>
-        <a href="fiches/${fiche.id}.pdf" download>
-          <button>📄 Télécharger la fiche PDF</button>
-        </a>
-      `;
-    }
-  </script>
-
 </body>
 </html>
+
