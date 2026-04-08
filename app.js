@@ -36,7 +36,6 @@ function afficherFiches() {
         <img src="${fiche.image}">
       `;
 
-      // 👉 navigation vers page fiche
       div.onclick = () => {
         window.location.href = `fiche.html?id=${fiche.id}`;
       };
@@ -69,6 +68,8 @@ function startScanner() {
   );
 }
 
-charger();
-afficherFiches();
-startScanner();
+window.onload = () => {
+  charger();
+  afficherFiches();
+  startScanner();
+};

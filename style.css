@@ -27,11 +27,6 @@ h1, h2 {
   text-align: center;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.fiche:active {
-  transform: scale(0.95);
 }
 
 .fiche img {
