@@ -1,12 +1,41 @@
+/* =========================
+GLOBAL
+========================= */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 20px;
-  background: #DCFCE7;
+
+  background: 
+    linear-gradient(rgba(220, 252, 231, 0.85), rgba(220, 252, 231, 0.85)),
+    url("images/background.jpg") no-repeat center center fixed;
+
+  background-size: cover;
 }
 
+/* TITRES */
 h1, h2 {
   text-align: center;
+  color: #3C6301;
+}
+
+/* =========================
+BOUTONS
+========================= */
+button {
+  margin-top: 15px;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: #3C6301;
+  color: white;
+  width: 100%;
+  font-weight: bold;
+  transition: transform 0.1s;
+}
+
+button:active {
+  transform: scale(0.97);
 }
 
 /* bouton scanner */
@@ -15,12 +44,12 @@ h1, h2 {
   margin: 20px auto;
   padding: 15px;
   font-size: 18px;
-  border-radius: 10px;
-  background: #3C6301;
-  color: white;
+  border-radius: 12px;
 }
 
-/* caméra (animation) */
+/* =========================
+SCANNER (animation)
+========================= */
 #reader {
   margin: 20px auto;
   max-width: 300px;
@@ -29,7 +58,6 @@ h1, h2 {
   transition: all 0.3s ease;
 }
 
-/* état visible */
 #reader.show {
   opacity: 1;
   transform: scale(1);
@@ -37,17 +65,21 @@ h1, h2 {
   border-radius: 10px;
 }
 
-/* grille */
+/* =========================
+GRILLE
+========================= */
 #fiches {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 15px;
 }
 
-/* cartes */
+/* =========================
+CARTES
+========================= */
 .fiche {
   background: white;
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 10px;
   text-align: center;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
@@ -64,14 +96,16 @@ h1, h2 {
   border-radius: 10px;
 }
 
-/* verrou */
+/* carte verrouillée */
 .locked {
-  background: ##bcd9b0;
+  background: #bcd9b0;
   color: #3C6301;
   cursor: default;
 }
 
-/* page détail */
+/* =========================
+PAGE FICHE
+========================= */
 .detail-img {
   width: 100%;
   max-height: 40vh;
@@ -84,14 +118,4 @@ h1, h2 {
   height: 50vh;
   margin-top: 15px;
   border: none;
-}
-
-button {
-  margin-top: 15px;
-  padding: 10px;
-  border: none;
-  border-radius: 8px;
-  background: #3C6301;
-  color: white;
-  width: 100%;
 }
