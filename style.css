@@ -103,13 +103,14 @@ GRILLE
 CARTES
 ========================= */
 .fiche {
-  background: white;
+  background: rgba(255, 255, 255, 0.85); /* transparence */
+  backdrop-filter: blur(6px); /* effet verre (top) */
+
   border-radius: 16px;
   padding: 10px;
   text-align: center;
 
   box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-
   cursor: pointer;
 
   transition: transform 0.2s ease, box-shadow 0.2s ease;
