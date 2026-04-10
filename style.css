@@ -6,17 +6,13 @@ body {
   margin: 0;
   padding: 20px;
 
+  min-height: 100vh; /* 🔥 important */
+
   background: 
     linear-gradient(rgba(220, 252, 231, 0.85), rgba(220, 252, 231, 0.85)),
-    url("images/background.jpg") no-repeat center center fixed;
+    url("images/background.jpg") no-repeat center center;
 
   background-size: cover;
-}
-
-/* TITRES */
-h1, h2 {
-  text-align: center;
-  color: #3C6301;
 }
 
 /* =========================
