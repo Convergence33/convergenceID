@@ -1,18 +1,42 @@
 /* =========================
-GLOBAL
+RESET & BASE
 ========================= */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
 body {
   font-family: Arial, sans-serif;
-  margin: 0;
   padding: 20px;
 
-  min-height: 100vh; /* 🔥 important */
+  /* hauteur minimum écran */
+  min-height: 100vh;
 
-  background: 
+  /* fond + filtre */
+  background:
     linear-gradient(rgba(220, 252, 231, 0.85), rgba(220, 252, 231, 0.85)),
-    url("images/background.jpg") no-repeat center center;
+    url("images/background.jpg");
 
   background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  /* améliore rendu mobile */
+  -webkit-font-smoothing: antialiased;
+}
+
+/* =========================
+TITRES
+========================= */
+h1, h2 {
+  text-align: center;
+  color: #3C6301;
+  margin-top: 10px;
 }
 
 /* =========================
@@ -22,16 +46,19 @@ button {
   margin-top: 15px;
   padding: 12px;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   background: #3C6301;
   color: white;
   width: 100%;
   font-weight: bold;
-  transition: transform 0.1s;
+  font-size: 16px;
+
+  transition: transform 0.1s ease, opacity 0.2s;
 }
 
 button:active {
-  transform: scale(0.97);
+  transform: scale(0.96);
+  opacity: 0.9;
 }
 
 /* bouton scanner */
@@ -40,15 +67,15 @@ button:active {
   margin: 20px auto;
   padding: 15px;
   font-size: 18px;
-  border-radius: 12px;
 }
 
 /* =========================
-SCANNER (animation)
+SCANNER (ANIMATION)
 ========================= */
 #reader {
   margin: 20px auto;
-  max-width: 300px;
+  max-width: 320px;
+
   opacity: 0;
   transform: scale(0.9);
   transition: all 0.3s ease;
@@ -57,8 +84,10 @@ SCANNER (animation)
 #reader.show {
   opacity: 1;
   transform: scale(1);
-  box-shadow: 0 0 20px rgba(0,0,0,0.3);
-  border-radius: 10px;
+
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 /* =========================
@@ -66,7 +95,7 @@ GRILLE
 ========================= */
 #fiches {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 15px;
 }
 
@@ -75,21 +104,25 @@ CARTES
 ========================= */
 .fiche {
   background: white;
-  border-radius: 14px;
+  border-radius: 16px;
   padding: 10px;
   text-align: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+
   cursor: pointer;
-  transition: transform 0.2s;
+
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .fiche:active {
-  transform: scale(0.95);
+  transform: scale(0.96);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
 }
 
 .fiche img {
   width: 100%;
-  border-radius: 10px;
+  border-radius: 12px;
 }
 
 /* carte verrouillée */
@@ -104,9 +137,9 @@ PAGE FICHE
 ========================= */
 .detail-img {
   width: 100%;
-  max-height: 40vh;
+  max-height: 45vh;
   object-fit: cover;
-  border-radius: 12px;
+  border-radius: 16px;
 }
 
 .pdf-viewer {
@@ -114,4 +147,20 @@ PAGE FICHE
   height: 50vh;
   margin-top: 15px;
   border: none;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* =========================
+RESPONSIVE
+========================= */
+@media (max-width: 500px) {
+  body {
+    padding: 15px;
+  }
+
+  #scan-btn {
+    font-size: 16px;
+    padding: 12px;
+  }
 }
