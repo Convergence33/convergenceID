@@ -1,5 +1,5 @@
 const fiches = [
-  { id: "fiche1", titre: "Carte 1", image: "images/carte1.webp", unlocked: false },
+  { id: "fiche1", titre: "L'ortie", image: "images/carte1.webp", unlocked: false },
   { id: "fiche2", titre: "Carte 2", image: "images/carte2.webp", unlocked: false },
   { id: "fiche3", titre: "Carte 3", image: "images/carte3.webp", unlocked: false }
 ];
