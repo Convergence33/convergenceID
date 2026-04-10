@@ -12,11 +12,11 @@ html, body {
 }
 
 /* =========================
-CONTAINER PRINCIPAL (IMPORTANT)
+APP CONTAINER (FOND GLOBAL)
 ========================= */
 .app {
   min-height: 100vh;
-  min-height: 100dvh; /* mobile moderne */
+  min-height: 100dvh;
 
   padding: 20px;
 
@@ -39,25 +39,40 @@ h1, h2 {
 }
 
 /* =========================
-BOUTONS
+BOUTONS (GLASS EFFECT)
 ========================= */
 button {
   margin-top: 15px;
   padding: 12px;
-  border: none;
   border-radius: 12px;
-  background: #3C6301;
+
+  background: rgba(60, 99, 1, 0.85);
+  backdrop-filter: blur(8px);
+
   color: white;
-  width: 100%;
   font-weight: bold;
   font-size: 16px;
 
-  transition: transform 0.1s ease, opacity 0.2s;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+
+  width: 100%;
+  transition: all 0.2s ease;
 }
 
 button:active {
   transform: scale(0.96);
-  opacity: 0.9;
+  background: rgba(60, 99, 1, 0.7);
+}
+
+button:hover {
+  background: rgba(60, 99, 1, 0.9);
+}
+
+/* bouton reset (plus discret) */
+#reset-btn {
+  background: rgba(60, 99, 1, 0.6);
 }
 
 /* bouton scanner */
@@ -102,7 +117,7 @@ GRILLE
 CARTES
 ========================= */
 .fiche {
-  background: rgba(255, 255, 255, 0.85); /* transparence */
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(6px);
 
   border-radius: 16px;
