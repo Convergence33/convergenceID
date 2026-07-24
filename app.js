@@ -3,6 +3,9 @@ const fiches = [
   { id: "fiche2", titre: "Carte 2", image: "images/carte2.webp", unlocked: false },
   { id: "fiche3", titre: "Carte 3", image: "images/carte3.webp", unlocked: false }
 { id: "fiche4", titre: "Carte 4", image: "images/carte4.webp", unlocked: false }
+{ id: "fiche5", titre: "Carte 5", image: "images/carte5.webp", unlocked: false }
+{ id: "fiche6", titre: "Carte 6", image: "images/carte6.webp", unlocked: false }
+
 ];
 
 // sauvegarde
