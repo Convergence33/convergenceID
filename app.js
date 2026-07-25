@@ -1,7 +1,7 @@
 const fiches = [
   {
     id: "fiche1",
-    titre: "Carte 1",
+    titre: "Historique",
     image: "images/carte1.webp",
     unlocked: false
   },
