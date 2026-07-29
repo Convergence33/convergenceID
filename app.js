@@ -11,7 +11,7 @@ const fiches = [
   },
   {
     id: "fiche2",
-    titre: "Carte 2",
+    titre: "Les papillons de l'île",
     image: "images/carte2.webp",
     unlocked: false
   },
