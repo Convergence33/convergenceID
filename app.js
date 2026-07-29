@@ -5,13 +5,13 @@
 const fiches = [
   {
     id: "fiche1",
-    titre: "Historique",
+    titre: "L'Histoire",
     image: "images/carte1.webp",
     unlocked: false
   },
   {
     id: "fiche2",
-    titre: "Les papillons de l'île",
+    titre: "Les papillons",
     image: "images/carte2.webp",
     unlocked: false
   },
