@@ -1,0 +1,30 @@
+{
+  "name": "L'île de Raymond",
+  "short_name": "L'île de Raymond",
+  "description": "Histoire, rôle, faune et flore de l'île de Raymond",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#DCFCE7",
+  "theme_color": "#3C6301",
+  "lang": "fr",
+  "categories": [
+    "education",
+    "nature"
+  ],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
